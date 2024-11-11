@@ -8,11 +8,34 @@
 import SwiftUI
 
 struct PrefrencesView: View {
-    var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
-    }
+    @Binding var mps: [MP]
+
+        var favoriteParties: [String] {
+            let favoriteMps = mps.filter { $0.isFavoriteMember }
+            return Array(Set(favoriteMps.map { $0.party }))
+        }
+
+        var favoriteMembers: [MP] {
+            mps.filter { $0.isFavoriteMember }
+        }
+
+        var body: some View {
+            NavigationView {
+                List {
+                    Section(header: Text("Favorite Parties")) {
+                        ForEach(favoriteParties, id: \.self) { party in
+                            Text(party.uppercased())
+                        }
+                    }
+
+                    Section(header: Text("Favorite Members")) {
+                        ForEach(favoriteMembers) { mp in
+                            MPRowView(mp: mp)
+                        }
+                    }
+                }
+                .navigationTitle("Preferences")
+            }
+        }
 }
 
-#Preview {
-    PrefrencesView()
-}

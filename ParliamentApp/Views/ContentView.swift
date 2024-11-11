@@ -7,6 +7,15 @@ struct ContentView: View {
         NavigationView {
             MPPartyView(mps: $mps)
                 .navigationTitle("Parties")
+                .toolbar {
+                    ToolbarItem(placement: .status) {
+                        NavigationLink(destination: PrefrencesView(mps: $mps)) {
+                            Text("Preferences")
+                            Label("Preferences", systemImage: "gear")
+                                .font(.subheadline)
+                            }
+                    }
+            }
                 .onAppear {
                     DataLoader.loadMps { fetchedMps in
                         if let fetchedMps = fetchedMps {

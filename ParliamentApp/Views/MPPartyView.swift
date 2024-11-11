@@ -7,8 +7,7 @@ struct MPPartyView: View {
     var body: some View {
         List {
             ForEach(partyList, id: \.self) { party in
-                let filteredMps = mps.filter { $0.party == party }
-                NavigationLink(destination: MPPartyDetailView(mps: filteredMps, party: party)) {
+                NavigationLink(destination: MPPartyDetailView(mps: $mps, party: party)) {
                     HStack {
                         Image(party)
                         Text(party.uppercased())

@@ -1,7 +1,7 @@
 import SwiftUI
 
 struct MPDetailView: View {
-    var mp: MP
+    @Binding var mp: MP
 
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -18,9 +18,9 @@ struct MPDetailView: View {
             Text("Constituency: \(mp.constituency)")
             
             Button(action: {
-//                mp.isFavorite.toggle()
+                mp.isFavoriteMember.toggle()
             }) {
-                Image(systemName: mp.isFavorite ? "star.fill" : "star")
+                Image(systemName: mp.isFavoriteMember ? "star.fill" : "star")
                     .foregroundColor(.yellow)
                     .font(.largeTitle)
             }

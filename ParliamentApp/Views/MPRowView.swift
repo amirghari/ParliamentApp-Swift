@@ -24,7 +24,7 @@ struct MPRowView: View {
                     .font(.subheadline)
             }
             Spacer()
-            Image(systemName: mp.isFavorite ? "star.fill" : "star")
+            Image(systemName: mp.isFavoriteMember ? "star.fill" : "star")
                 .foregroundColor(.yellow)
         }
     }

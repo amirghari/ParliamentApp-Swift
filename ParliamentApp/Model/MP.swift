@@ -8,7 +8,7 @@ struct MP: Identifiable, Codable {
     let party: String
     let bornYear: Int
     let constituency: String
-    var isFavorite: Bool = false
+    var isFavoriteMember: Bool = false
 
     enum CodingKeys: String, CodingKey {
         case id = "personNumber"
