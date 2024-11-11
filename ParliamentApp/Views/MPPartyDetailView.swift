@@ -13,7 +13,7 @@ struct MPPartyDetailView: View {
     var body: some View {
         List {
             ForEach(filteredMps, id: \.id) { $mp in
-                NavigationLink(destination: MPDetailView(mp: $mp)) {
+                NavigationLink(destination: MPDetailView(mp: $mp, mps: $mps)) {
                     MPRowView(mp: mp)
                 }
             }

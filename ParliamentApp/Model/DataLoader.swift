@@ -1,28 +1,58 @@
 import Foundation
 
-class DataLoader {
-    static let urlString = "https://users.metropolia.fi/~peterh/mps.json"
+class DataLoader: ObservableObject {
+    @Published var mps: [MP] = []
 
-    static func loadMps(completion: @escaping ([MP]?) -> Void) {
-        guard let url = URL(string: urlString) else {
-            completion(nil)
+    private static let urlString = "https://users.metropolia.fi/~peterh/mps.json"
+
+    private static let fileURL: URL = {
+        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+        return documentDirectory.appendingPathComponent("mps.json")
+    }()
+
+    func loadMps() {
+        if let localMps = loadLocalMps() {
+            self.mps = localMps
+        }
+
+        guard let url = URL(string: DataLoader.urlString) else {
             return
         }
-        
+
         URLSession.shared.dataTask(with: url) { data, response, error in
             guard let data = data, error == nil else {
                 print("Failed to fetch data: \(error?.localizedDescription ?? "Unknown error")")
-                completion(nil)
                 return
             }
             
             do {
-                let mps = try JSONDecoder().decode([MP].self, from: data)
-                completion(mps)
+                let fetchedMps = try JSONDecoder().decode([MP].self, from: data)
+                DispatchQueue.main.async {
+                    self.mps = fetchedMps
+                }
+                DataLoader.saveMps(fetchedMps) // Save the fetched MPs locally
             } catch {
                 print("Failed to decode JSON: \(error.localizedDescription)")
-                completion(nil)
             }
         }.resume()
+    }
+
+    // Function to save MPs to the local file
+    static func saveMps(_ mps: [MP]) {
+        do {
+            let data = try JSONEncoder().encode(mps)
+            try data.write(to: fileURL)
+        } catch {
+            print("Failed to save MPs: \(error)")
+        }
+    }
+
+    // Function to load MPs from local file
+    func loadLocalMps() -> [MP]? {
+        if let data = try? Data(contentsOf: DataLoader.fileURL),
+           let mps = try? JSONDecoder().decode([MP].self, from: data) {
+            return mps
+        }
+        return nil
     }
 }

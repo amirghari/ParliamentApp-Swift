@@ -2,6 +2,7 @@ import SwiftUI
 
 struct MPDetailView: View {
     @Binding var mp: MP
+    @Binding var mps: [MP]
 
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -19,6 +20,7 @@ struct MPDetailView: View {
             
             Button(action: {
                 mp.isFavoriteMember.toggle()
+                DataLoader.saveMps(mps)
             }) {
                 Image(systemName: mp.isFavoriteMember ? "star.fill" : "star")
                     .foregroundColor(.yellow)
