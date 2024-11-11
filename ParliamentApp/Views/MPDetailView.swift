@@ -20,6 +20,10 @@ struct MPDetailView: View {
             
             Button(action: {
                 mp.isFavoriteMember.toggle()
+                if let index = mps.firstIndex(where: { $0.id == mp.id }) {
+                    mps[index] = mp
+                }
+                
                 DataLoader.saveMps(mps)
             }) {
                 Image(systemName: mp.isFavoriteMember ? "star.fill" : "star")
@@ -29,5 +33,6 @@ struct MPDetailView: View {
             
             Spacer()
         }
+        .padding()
     }
 }

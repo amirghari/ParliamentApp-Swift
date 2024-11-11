@@ -4,17 +4,15 @@ struct MPPartyDetailView: View {
     @Binding var mps: [MP]
     var party: String
 
-    var filteredMps: [Binding<MP>] {
-        mps.enumerated().compactMap { index, mp in
-            mp.party == party ? $mps[index] : nil
-        }
+    var filteredIndices: [Int] {
+        mps.indices.filter { mps[$0].party == party }
     }
 
     var body: some View {
         List {
-            ForEach(filteredMps, id: \.id) { $mp in
-                NavigationLink(destination: MPDetailView(mp: $mp, mps: $mps)) {
-                    MPRowView(mp: mp)
+            ForEach(filteredIndices, id: \.self) { index in
+                NavigationLink(destination: MPDetailView(mp: $mps[index], mps: $mps)) {
+                    MPRowView(mp: mps[index])
                 }
             }
         }

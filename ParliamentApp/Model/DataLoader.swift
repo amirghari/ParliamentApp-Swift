@@ -10,6 +10,7 @@ class DataLoader: ObservableObject {
         return documentDirectory.appendingPathComponent("mps.json")
     }()
 
+    // Function to load MPs from the remote URL or local file if the URL fails
     func loadMps() {
         if let localMps = loadLocalMps() {
             self.mps = localMps
@@ -48,7 +49,7 @@ class DataLoader: ObservableObject {
     }
 
     // Function to load MPs from local file
-    func loadLocalMps() -> [MP]? {
+    private func loadLocalMps() -> [MP]? {
         if let data = try? Data(contentsOf: DataLoader.fileURL),
            let mps = try? JSONDecoder().decode([MP].self, from: data) {
             return mps

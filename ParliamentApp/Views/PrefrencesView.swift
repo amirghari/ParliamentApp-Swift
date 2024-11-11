@@ -1,41 +1,27 @@
-//
-//  PrefrencesView.swift
-//  ParliamentApp
-//
-//  Created by Amir Ghari on 11/11/24.
-//
-
 import SwiftUI
 
-struct PrefrencesView: View {
+struct PreferencesView: View {
     @Binding var mps: [MP]
 
-        var favoriteParties: [String] {
-            let favoriteMps = mps.filter { $0.isFavoriteMember }
-            return Array(Set(favoriteMps.map { $0.party }))
-        }
-
-        var favoriteMembers: [MP] {
-            mps.filter { $0.isFavoriteMember }
-        }
-
-        var body: some View {
-            NavigationView {
-                List {
-                    Section(header: Text("Favorite Parties")) {
-                        ForEach(favoriteParties, id: \.self) { party in
-                            Text(party.uppercased())
-                        }
-                    }
-
-                    Section(header: Text("Favorite Members")) {
-                        ForEach(favoriteMembers) { mp in
-                            MPRowView(mp: mp)
-                        }
-                    }
+    var body: some View {
+        VStack {
+            Text("Favorite Parties")
+                .font(.headline)
+            List {
+                let favoriteParties = Set(mps.filter { $0.isFavoriteMember }.map { $0.party })
+                ForEach(Array(favoriteParties), id: \.self) { party in
+                    Text(party.uppercased())
                 }
-                .navigationTitle("Preferences")
+            }
+            
+            Text("Favorite Members")
+                .font(.headline)
+            List {
+                ForEach(mps.filter { $0.isFavoriteMember }) { mp in
+                    Text("\(mp.firstName) \(mp.lastName)")
+                }
             }
         }
+        .padding()
+    }
 }
-

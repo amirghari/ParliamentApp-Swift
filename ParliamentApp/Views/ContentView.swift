@@ -8,14 +8,14 @@ struct ContentView: View {
             MPPartyView(mps: $dataLoader.mps)
                 .navigationTitle("Parties")
                 .toolbar {
-                    ToolbarItem(placement: .status) {
-                        NavigationLink(destination: PrefrencesView(mps: $dataLoader.mps)) {
+                    ToolbarItem(placement: .navigationBarTrailing) {
+                        NavigationLink(destination: PreferencesView(mps: $dataLoader.mps)) {
                             Text("Preferences")
                             Label("Preferences", systemImage: "gear")
                                 .font(.subheadline)
-                            }
+                        }
                     }
-            }
+                }
                 .onAppear {
                     dataLoader.loadMps()
                 }
