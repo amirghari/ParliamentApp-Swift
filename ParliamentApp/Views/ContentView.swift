@@ -1,21 +1,21 @@
 import SwiftUI
 
 struct ContentView: View {
-    @State private var mps = DataLoader.loadMps()
+    @State private var mps: [MP] = []
 
     var body: some View {
         NavigationView {
-            MPPartyView()
+            MPPartyView(mps: $mps)
                 .navigationTitle("Parties")
-                .toolbar {
-                    ToolbarItem(placement: .status) {
-                        NavigationLink(destination: PrefrencesView()) {
-                            Text("Preferences")
-                            Label("Preferences", systemImage: "gear")
-                                
+                .onAppear {
+                    DataLoader.loadMps { fetchedMps in
+                        if let fetchedMps = fetchedMps {
+                            DispatchQueue.main.async {
+                                self.mps = fetchedMps
+                            }
                         }
                     }
                 }
-            }
         }
     }
+}

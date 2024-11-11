@@ -1,26 +1,20 @@
 import SwiftUI
 
 struct MPPartyView: View {
-    var party = ["kesk", "kok", "ps", "sd", "vas", "kd", "vihr", "r", "liik"]
-    
+    @Binding var mps: [MP]
+    var partyList = ["kesk", "kok", "ps", "sd", "vas", "kd", "vihr", "r", "liik"]
+
     var body: some View {
-            List {
-                ForEach(party, id: \.self) { party in
-                    NavigationLink(destination: MPPartyDetailView(party: party)) {
-                        HStack {
-                            Image(party)
-                                .resizable()
-                                .frame(width: 50, height: 50)
-                            Text(party)
-                                .font(.headline)
-                                .textCase(.uppercase)
-                        }
+        List {
+            ForEach(partyList, id: \.self) { party in
+                let filteredMps = mps.filter { $0.party == party }
+                NavigationLink(destination: MPPartyDetailView(mps: filteredMps, party: party)) {
+                    HStack {
+                        Image(party)
+                        Text(party.uppercased())
                     }
                 }
             }
         }
     }
-
-#Preview {
-    MPPartyView()
 }

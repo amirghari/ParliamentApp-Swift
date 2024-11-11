@@ -1,35 +1,28 @@
 import Foundation
 
-@Observable
 class DataLoader {
-    static let fileURL: URL = {
-        let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
-        return documentDirectory.appendingPathComponent("mps.json")
-    }()
+    static let urlString = "https://users.metropolia.fi/~peterh/mps.json"
 
-    static func loadMps() -> [MP] {
-            
-            guard let url = Bundle.main.url(forResource: "mps", withExtension: "json") else {
-                print("Failed to find mps.json in bundle")
-                return []
+    static func loadMps(completion: @escaping ([MP]?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
+            return
+        }
+        
+        URLSession.shared.dataTask(with: url) { data, response, error in
+            guard let data = data, error == nil else {
+                print("Failed to fetch data: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
+                return
             }
             
             do {
-                let data = try Data(contentsOf: url)
                 let mps = try JSONDecoder().decode([MP].self, from: data)
-                return mps
+                completion(mps)
             } catch {
-                print("Error loading MPs: \(error)")
-                return []
+                print("Failed to decode JSON: \(error.localizedDescription)")
+                completion(nil)
             }
-        }
-
-    static func saveMps(_ mps: [MP]) {
-        do {
-            let data = try JSONEncoder().encode(mps)
-            try data.write(to: fileURL)
-        } catch {
-            print("Failed to save MPs: \(error)")
-        }
+        }.resume()
     }
 }
