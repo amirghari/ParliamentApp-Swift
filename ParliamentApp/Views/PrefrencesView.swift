@@ -13,7 +13,7 @@ struct PreferencesView: View {
                     Text(party.uppercased())
                 }
             }
-            
+
             Text("Favorite Members")
                 .font(.headline)
             List {
