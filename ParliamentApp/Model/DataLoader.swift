@@ -1,45 +1,32 @@
 import Foundation
 
-class DataLoader: ObservableObject {
-    @Published var mps: [MP] = []
-
-    private static let urlString = "https://users.metropolia.fi/~peterh/mps.json"
-    private static let fileURL: URL = {
+class DataLoader {
+    static let urlString = "https://users.metropolia.fi/~peterh/mps.json"
+    static let fileURL: URL = {
         let documentDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
         return documentDirectory.appendingPathComponent("mps.json")
     }()
 
-    init() {
-        loadMps()
-    }
-
-    func loadMps() {
-        if let localMps = loadLocalMps() {
-            self.mps = localMps
-        } else {
-            loadRemoteMps()
-        }
-    }
-
-    private func loadRemoteMps() {
-        guard let url = URL(string: DataLoader.urlString) else {
+    static func loadRemoteMps(completion: @escaping ([MP]?) -> Void) {
+        guard let url = URL(string: urlString) else {
+            completion(nil)
             return
         }
 
-        URLSession.shared.dataTask(with: url) { data, response, error in
+        URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data, error == nil else {
                 print("Failed to fetch data: \(error?.localizedDescription ?? "Unknown error")")
+                completion(nil)
                 return
             }
 
             do {
-                let fetchedMps = try JSONDecoder().decode([MP].self, from: data)
-                DispatchQueue.main.async {
-                    self.mps = fetchedMps
-                    DataLoader.saveMps(fetchedMps)
-                }
+                let mps = try JSONDecoder().decode([MP].self, from: data)
+                saveMps(mps)
+                completion(mps)
             } catch {
                 print("Failed to decode JSON: \(error.localizedDescription)")
+                completion(nil)
             }
         }.resume()
     }
@@ -53,8 +40,8 @@ class DataLoader: ObservableObject {
         }
     }
 
-    private func loadLocalMps() -> [MP]? {
-        if let data = try? Data(contentsOf: DataLoader.fileURL),
+    static func loadLocalMps() -> [MP]? {
+        if let data = try? Data(contentsOf: fileURL),
            let mps = try? JSONDecoder().decode([MP].self, from: data) {
             return mps
         }

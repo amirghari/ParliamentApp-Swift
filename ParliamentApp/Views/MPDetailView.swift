@@ -1,8 +1,8 @@
 import SwiftUI
 
 struct MPDetailView: View {
-    @Binding var mp: MP
-    @Binding var mps: [MP]
+    var mp: MP
+    @ObservedObject var mpModel: MPModel
 
     var body: some View {
         VStack(alignment: .center, spacing: 10) {
@@ -19,11 +19,7 @@ struct MPDetailView: View {
             Text("Constituency: \(mp.constituency)")
 
             Button(action: {
-                mp.isFavoriteMember.toggle()
-                if let index = mps.firstIndex(where: { $0.id == mp.id }) {
-                    mps[index] = mp
-                }
-                DataLoader.saveMps(mps)
+                mpModel.toggleFavorite(for: mp)
             }) {
                 Image(systemName: mp.isFavoriteMember ? "star.fill" : "star")
                     .foregroundColor(.yellow)
