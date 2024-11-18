@@ -18,6 +18,6 @@ struct MP: Identifiable, Codable {
         case party
         case bornYear
         case constituency
+        case isFavoriteMember
     }
 }
-

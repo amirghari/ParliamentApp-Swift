@@ -9,7 +9,10 @@ struct PreferencesView: View {
                 .font(.headline)
             List {
                 ForEach(mpModel.favoriteParties, id: \.self) { party in
-                    Text(party.uppercased())
+                    HStack {
+                        Image(party)
+                        Text(party.uppercased())
+                    }
                 }
             }
 

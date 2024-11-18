@@ -24,10 +24,20 @@ class MPModel: ObservableObject {
     func loadMps() {
         if let localMps = DataLoader.loadLocalMps() {
             self.mps = localMps
-        } else {
-            DataLoader.loadRemoteMps { fetchedMps in
-                DispatchQueue.main.async {
-                    self.mps = fetchedMps ?? []
+        }
+
+        DataLoader.loadRemoteMps { fetchedMps in
+            DispatchQueue.main.async {
+                if let fetchedMps = fetchedMps {
+                    // Merge isFavoriteMember status from self.mps into fetchedMps
+                    var mergedMps = fetchedMps
+                    for (index, fetchedMp) in fetchedMps.enumerated() {
+                        if let existingMp = self.mps.first(where: { $0.id == fetchedMp.id }) {
+                            mergedMps[index].isFavoriteMember = existingMp.isFavoriteMember
+                        }
+                    }
+                    self.mps = mergedMps
+                    DataLoader.saveMps(self.mps)
                 }
             }
         }
